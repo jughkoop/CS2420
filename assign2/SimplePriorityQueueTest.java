@@ -24,7 +24,7 @@ class SimplePriorityQueueTest {
 	private int[] arr = new int[100];
 	
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp() {
 		integerQueue = new SimplePriorityQueue<Integer>();
 		integerQueue.insert(15);
 		integerQueue.insert(25);
@@ -63,14 +63,14 @@ class SimplePriorityQueueTest {
 	public void testFindMaxValue(){
 		assertEquals(55, integerQueue.findMax(),"The maxiumum value shoule be 55");
 		assertEquals(6.8, doubleQueue.findMax(), "The maxiumum value should be 6.8");
-		assertEquals(arr[arr.length-1], randomQueue.findMax(),"The maxiumum value should be the last index" );
+		assertEquals(arr[arr.length-1], randomQueue.findMax(), "The maxiumum value should be the last index" );
 		assertEquals("apple", stringQueue.findMax(), "The maxiumum value should be according to the custom comparator");
 	}
 	
 	@Test
 	public void testFindMaxNoSuchElementException() {
 		doubleQueue.clear();
-		assertThrows(NoSuchElementException.class, () -> { doubleQueue.findMax(); });
+		assertThrows(NoSuchElementException.class, () -> {doubleQueue.findMax();});
 	}
 	
 	@Test
@@ -100,7 +100,7 @@ class SimplePriorityQueueTest {
 	public void testDeleteMax() {
 		assertEquals(55, integerQueue.deleteMax(), "The maximum value should be 55");
 		assertEquals(6.8, doubleQueue.deleteMax(), "The maxiumum value should be 6.8");
-		assertEquals(arr[arr.length-1], randomQueue.deleteMax(),"The maxiumum value should be the last index" );
+		assertEquals(arr[arr.length-1], randomQueue.deleteMax(), "The maxiumum value should be the last index" );
 	}
 	
 	@Test
@@ -108,15 +108,15 @@ class SimplePriorityQueueTest {
 		integerQueue.deleteMax();
 		doubleQueue.deleteMax();
 		randomQueue.deleteMax();
-		assertEquals(4, integerQueue.size(),"The array size should be 4");
+		assertEquals(4, integerQueue.size(), "The array size should be 4");
 		assertEquals(2, doubleQueue.size(), "The array size should be 2");
-		assertEquals(99, randomQueue.size(),"The array size should be 99");
+		assertEquals(99, randomQueue.size()," The array size should be 99");
 	}
 	
 	@Test
 	public void testDeleteMaxNoSuchElementException() {
 		doubleQueue.clear();
-		assertThrows(NoSuchElementException.class, () -> { doubleQueue.deleteMax(); });
+		assertThrows(NoSuchElementException.class, () -> {doubleQueue.deleteMax();});
 	}
 	
 	@Test
@@ -125,8 +125,8 @@ class SimplePriorityQueueTest {
 		doubleQueue.insert(9.7);
 		randomQueue.insert(257);
 		assertEquals(6, integerQueue.size(), "The array size should be 6");
-		assertEquals(4, doubleQueue.size(),"The array size should be 4");
-		assertEquals(101, randomQueue.size(),"The array size should be 101");
+		assertEquals(4, doubleQueue.size(), "The array size should be 4");
+		assertEquals(101, randomQueue.size(), "The array size should be 101");
 	}
 	
 	@Test
@@ -138,7 +138,7 @@ class SimplePriorityQueueTest {
 		intList.add(75);
 		intList.add(55);
 		integerQueue.insertAll(intList);
-		assertEquals(10, integerQueue.size(),"The array size should be 10");
+		assertEquals(10, integerQueue.size(), "The array size should be 10");
 	}
 	
 	@Test

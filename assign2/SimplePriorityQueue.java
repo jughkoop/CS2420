@@ -26,7 +26,7 @@ public class SimplePriorityQueue<E> implements PriorityQueue<E>{
      */
     @SuppressWarnings("unchecked")
 	public SimplePriorityQueue() {
-    	backingArray = (E[]) new Object[16];
+    	backingArray = (E[])new Object[16];
     	size = 0;
     	cmp = (Comparator<? super E>)Comparator.naturalOrder();
     }
@@ -40,7 +40,7 @@ public class SimplePriorityQueue<E> implements PriorityQueue<E>{
      */
     @SuppressWarnings("unchecked")
 	public SimplePriorityQueue(Comparator<? super E> cmp) {
-    	backingArray = (E[]) new Object[16];
+    	backingArray = (E[])new Object[16];
     	size = 0;
     	this.cmp = cmp;
     }
@@ -108,7 +108,7 @@ public class SimplePriorityQueue<E> implements PriorityQueue<E>{
 	public E findMax() throws NoSuchElementException {
 		if(isEmpty())
 			throw new NoSuchElementException();
-		return backingArray[size-1];
+		return backingArray[size - 1];
 	}
 
 	/**
