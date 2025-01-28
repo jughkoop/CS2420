@@ -120,9 +120,10 @@ public class SimplePriorityQueue<E> implements PriorityQueue<E>{
 	public void insert(E item) {
 		if(size == backingArray.length) 
 			doubleBackingArray();
-		for(int i = size; i > binarySearch(item, cmp); i--)
+		int index = binarySearch(item, cmp);
+		for(int i = size; i > index; i--)
 			backingArray[i] = backingArray[i - 1];
-		backingArray[binarySearch(item, cmp)] = item;
+		backingArray[index] = item;
 		size++;
 	}
 

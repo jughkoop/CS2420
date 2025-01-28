@@ -56,7 +56,7 @@ class SimplePriorityQueueTest {
 	@Test
 	public void testClear(){
 		integerQueue.clear();
-		assertEquals(0, integerQueue.size(), "The elements of the array size should be 0");
+		assertEquals(0, integerQueue.size(), "The array size should be 0");
 	}
 	
 	@Test
@@ -108,7 +108,7 @@ class SimplePriorityQueueTest {
 		integerQueue.deleteMax();
 		doubleQueue.deleteMax();
 		randomQueue.deleteMax();
-		assertEquals(4, integerQueue.size(),"The array size shoule be 4");
+		assertEquals(4, integerQueue.size(),"The array size should be 4");
 		assertEquals(2, doubleQueue.size(), "The array size should be 2");
 		assertEquals(99, randomQueue.size(),"The array size should be 99");
 	}
