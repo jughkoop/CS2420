@@ -60,9 +60,9 @@ public class LargestNumberSolver {
 		long largestLong = arrayCopy[0];
 		// concatenates each value of the sorted array into a long
 		for(int i = 1; i < arr.length; i++) {
-			if(Integer.parseInt((intConcatenate(largestLong, arrayCopy[i]))) > Long.MAX_VALUE)
+			if(Long.parseLong((intConcatenate(largestLong, arrayCopy[i]))) > Long.MAX_VALUE)
 				throw new OutOfRangeException("long");
-			largestLong = Integer.parseInt((intConcatenate(largestLong, arrayCopy[i])));
+			largestLong = Long.parseLong((intConcatenate(largestLong, arrayCopy[i])));
 		}
 		
 		return largestLong;
