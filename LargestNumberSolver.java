@@ -1,6 +1,7 @@
 package assign04;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class LargestNumberSolver {
 		for(int i = 1; i < arr.length; i++) {
 			T temp = arr[i];
 			int j;
-			for(j = i - 1; j >= 0 && cmp.compare(arr[j], temp) > 0; j--) {
+			for(j = i - 1; j >= 0 && cmp.compare(arr[j], temp) < 0; j--) {
 				arr[j + 1] = arr[j];
 			}
 			arr[j + 1] = temp;
@@ -75,11 +76,33 @@ public class LargestNumberSolver {
 	}
 	
 	public static BigInteger sum(List<Integer[]> list) {
-		
+		BigInteger sum = BigInteger.valueOf(0);
+		for(Integer[] arr : list) 
+			sum.add(findLargestNumber(arr));
+		return sum;
 	}
 	
 	public static Integer[] findKthLargest(List<Integer[]> list, int k) {
-		
+		// copies the given list into an ArrayList
+		ArrayList<Integer[]> listCopy = new ArrayList<Integer[]>();
+		Integer[] arr;
+		Integer[] arrCopy;
+		for(int i = 0; i < list.size(); i++) {
+			arr = list.get(i);
+			arrCopy = new Integer[arr.length];
+			// copies the array at list index i
+			for(int j = 0; j < arr.length; j++)
+				arrCopy[j] = arr[j];
+			// adds the array copy to the list copy
+			listCopy.add(arrCopy);
+		}
+		// converts the list copy into an array for use in insertionSort
+		Object[] listArray = listCopy.toArray();
+		// sorts the list copy
+		insertionSort(listArray, (arr1, arr2) -> 
+		(findLargestNumber((Integer[])arr1).subtract(findLargestNumber((Integer[])arr2))).intValue());
+		// returns kth largest array
+		return (Integer[])listArray[k];
 	}
 	
 	public static List<Integer[]> readFile(String filename) {
