@@ -6,14 +6,16 @@ import java.util.List;
 
 public class LargestNumberSolver {
 	
-	public static <T> void insertionSort(T[] arr, Comparator<? super T> cmp) {
-		for(int i = 1; i < arr.length - 1; i++) {
+	public static <T> T[] insertionSort(T[] arr, Comparator<? super T> cmp) {
+		for(int i = 1; i < arr.length; i++) {
 			T temp = arr[i];
-			for(int j = i - 1; j >= 0 && cmp.compare(arr[i - 1], arr[i]) > 0; j--) {
-				arr[i] = arr[j];
-				arr[j] = temp;
+			int j;
+			for(j = i - 1; j >= 0 && cmp.compare(arr[j], temp) > 0; j--) {
+				arr[j + 1] = arr[j];
 			}
+			arr[j + 1] = temp;
 		}
+		return arr;
 	}
 	
 	public static BigInteger findLargestNumber(Integer[] arr) {
@@ -39,11 +41,13 @@ public class LargestNumberSolver {
 		// sorts the array copy
 		insertionSort(arrayCopy, (i, j) -> Integer.parseInt(intConcatenate(i, j)) - Integer.parseInt(intConcatenate(j, i)));
 		int largestInt = arrayCopy[0];
+		String concat = "";
 		// concatenates each value of the sorted array into an int
 		for(int i = 1; i < arr.length; i++) {
-			if(Integer.parseInt((intConcatenate(largestInt, arrayCopy[i]))) > Integer.MAX_VALUE)
+			concat = intConcatenate(largestInt, arrayCopy[i]);
+			if(BigInteger.valueOf(Long.parseLong(concat)).compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0)
 					throw new OutOfRangeException("int");
-			largestInt = Integer.parseInt((intConcatenate(largestInt, arrayCopy[i])));
+			largestInt = Integer.parseInt(concat);
 		}
 				
 		return largestInt;
@@ -58,11 +62,13 @@ public class LargestNumberSolver {
 		// sorts the array copy
 		insertionSort(arrayCopy, (i, j) -> Integer.parseInt(intConcatenate(i, j)) - Integer.parseInt(intConcatenate(j, i)));
 		long largestLong = arrayCopy[0];
+		String concat = "";
 		// concatenates each value of the sorted array into a long
 		for(int i = 1; i < arr.length; i++) {
-			if(Long.parseLong((intConcatenate(largestLong, arrayCopy[i]))) > Long.MAX_VALUE)
+			concat = intConcatenate(largestLong, arrayCopy[i]);
+			if(BigInteger.valueOf(Long.parseLong(concat)).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0)
 				throw new OutOfRangeException("long");
-			largestLong = Long.parseLong((intConcatenate(largestLong, arrayCopy[i])));
+			largestLong = Long.parseLong(concat);
 		}
 		
 		return largestLong;
