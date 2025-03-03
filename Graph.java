@@ -93,10 +93,11 @@ public class Graph<Type> {
 	
 	public List<Type> topoSort() {
 		List<Type> sorted = new ArrayList<Type>();
+		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 		Queue<Vertex> queue = new LinkedList<Vertex>();
 		int indegree;
 		
-		ArrayList<Vertex> vertices = (ArrayList<Graph<Type>.Vertex>)graph.values();
+		vertices.addAll(graph.values());
 		for(Vertex vertex : vertices) {
 			indegree = vertex.indegree;
 			if(indegree == 0) {
@@ -117,6 +118,10 @@ public class Graph<Type> {
 		}
 		
 		return sorted;
+	}
+	
+	public int size() {
+		return graph.size();
 	}
 	
 	private class Vertex {
