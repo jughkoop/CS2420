@@ -34,6 +34,8 @@ public class Graph<Type> {
 	}
 	
 	public boolean depthFirstSearch(Type source, Type destination) {
+		if(graph.get(source) == null || graph.get(destination) == null)
+			return false;
 		if(source.equals(destination))
 			return true;
 		graph.get(source).isVisited = true;
@@ -41,8 +43,10 @@ public class Graph<Type> {
 		Vertex sourceVertex = graph.get(source);
 		for(int i = 0; i < sourceVertex.adjacent.size(); i++) {
 			Vertex adjacentVertex = sourceVertex.adjacent.get(i);
-			if(!adjacentVertex.isVisited)
+			if(!adjacentVertex.isVisited) {
 				depthFirstSearch(adjacentVertex.data, destination);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -88,29 +92,51 @@ public class Graph<Type> {
 	}
 	
 	public List<Type> topoSort() {
+		List<Type> sorted = new ArrayList<Type>();
+		Queue<Vertex> queue = new LinkedList<Vertex>();
+		int indegree;
 		
+		ArrayList<Vertex> vertices = (ArrayList<Graph<Type>.Vertex>)graph.values();
+		for(Vertex vertex : vertices) {
+			indegree = vertex.indegree;
+			if(indegree == 0) {
+				queue.offer(vertex);
+				sorted.add(vertex.data);
+			}
+			while (!queue.isEmpty()) {
+				Vertex next = queue.poll();
+				for(Vertex adjacentVertex : next.adjacent) {
+					indegree = adjacentVertex.indegree;
+					indegree--;
+					if(indegree == 0) {
+						queue.offer(adjacentVertex);
+						sorted.add(adjacentVertex.data);
+					}
+				}
+			}	
+		}
+		
+		return sorted;
 	}
-	
 	
 	private class Vertex {
 		public Type data;
 		public List<Vertex> adjacent;
 		public boolean isVisited;
 		public Vertex cameFrom;
+		public int indegree;
 		
 		public Vertex(Type data) {
 			this.data= data;
 			adjacent = new ArrayList<Vertex>();
 			isVisited = false;
 			cameFrom = null;
+			indegree = 0;
 		}
-		
-		public Type getData() {
-			return data;
-		}
-		
+				
 		public void addEdge(Vertex other) {
 			adjacent.add(other);
+			other.indegree++;
 		}
 		
 		public String toString() {
