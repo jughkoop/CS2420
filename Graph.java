@@ -50,6 +50,8 @@ public class Graph<Type> {
 		Type current;
 		Vertex currentVertex;
 		
+		if(!graph.containsKey(source))
+			return path;
 		queue.offer(source);
 		while(!queue.isEmpty()) {
 			current = queue.poll();
@@ -66,8 +68,10 @@ public class Graph<Type> {
 		}
 		
 		Vertex vertex = graph.get(destination);
-		while(!vertex.equals(null)) {
+		while(vertex != null) {
 			path.add(vertex.data);
+			if(vertex.cameFrom == null || vertex.cameFrom.equals(vertex))
+				break;
 			vertex = vertex.cameFrom;
 		}
 		
