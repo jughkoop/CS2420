@@ -34,13 +34,19 @@ public class Graph<Type> {
 	}
 	
 	public boolean depthFirstSearch(Type source, Type destination) {
+		if(!graph.containsKey(source) || !graph.containsKey(destination))
+			return false;
+		return dfsRecursive(graph.get(source), graph.get(destination));
+	}
+	
+	private boolean dfsRecursive(Vertex source, Vertex destination) {
 		if(source.equals(destination))
 			return true;
 		graph.get(source).isVisited = true;
 		
 		for(Vertex vertex : graph.get(source).adjacent)
 			if(!vertex.isVisited)
-				depthFirstSearch(vertex.data, destination);
+				dfsRecursive(vertex, destination);
 		return false;
 	}
 	
@@ -82,6 +88,10 @@ public class Graph<Type> {
 		}
 		
 		return path;
+	}
+	
+	public List<Type> topoSort() {
+		
 	}
 	
 	
