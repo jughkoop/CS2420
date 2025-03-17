@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 /**
  * Implements a binary search tree (BST), a special type of graph
- * where each vertex (node) points only up to two other nodes.
- * All "left" nodes are lesser than its parent, while all
- * "right" nodes are greater than its parent.
+ * where each vertex (Node) points only up to two other Nodes.
+ * All "left" Nodes are lesser than its parent, while all
+ * "right" Nodes are greater than its parent.
  * 
  * @author Daniel Lee and Mi Zeng
  * @version 3-17-2025
@@ -38,6 +38,13 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 		if(item == null || contains(item))
 			return false;
 		
+		// if the BST is empty, add the given item to the head Node
+		if(isEmpty()) {
+			head = new Node(item);
+			size++;
+			return true;
+		}
+		
 		return addRecursive(item, head, null, 0);
 	}
 	
@@ -46,28 +53,26 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 	 * and adds the given item into a valid location.
 	 * 
 	 * @param item - the item to add to the BST
-	 * @param current - the current node of the BST being looked at
-	 * @param parent - where the current node came from
-	 * @param direction - an int that indicates if the current node is 
-	 * 					  a left child (-1), right child (1) or the head (0)
+	 * @param current - the current Node of the BST being looked at
+	 * @param parent - where the current Node came from
+	 * @param direction - an int that indicates if the current Node is 
+	 * 					  a left child (-1) or right child (1)
 	 * @return true once the item is added successfully into the BST
 	 */
 	private boolean addRecursive(Type item, Node current, Node parent, int direction) {
-		// if the current node is null, the method has traversed to the proper location
+		// if the current Node is null, the method has traversed to the proper location
 		// to add the item
 		if(current == null) {
 			// updates current to hold the given item and sets
 			// its parent
 			current = new Node(item);
 			current.parent = parent;
-			// adds current into the bst as a left child, right child
-			// of the parent, or the head of the BST
-			if(direction == -1)
+			// if direction is negative current is its parent's left child
+			if(direction < 0)
 				parent.leftChild = current;
-			else if(direction == 1)
-				parent.rightChild = current;
+			// if direction is positive current is its parent's right child
 			else
-				head = current;
+				parent.rightChild = current;
 			size++;
 			
 			return true;
@@ -103,30 +108,29 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 		if(item == null || isEmpty())
 			return false;
 		
-		return containsRecursive(item, head);
+		Node found = search(item, head);
+		if(found == null)
+			return false;
+		return true;
 	
 	}
 	
 	/**
-	 * Helper recursive method that traverses the BST and checks
-	 * if the BST holds the given item.
+	 * Helper recursive method that finds the Node that holds 
+	 * the given item.
 	 * 
-	 * @param item - the item the check if the BST holds
-	 * @param current - the current node being looked at
-	 * @return true if the data in the current node is equal to the given item,
-	 * 		   false if the method has traversed to where the item should be in
-	 * 		   the BST but the current node is null
+	 * @param item - the item to remove from the BST
+	 * @param current - the current Node being looked at
+	 * @return the Node whose data is the item to remove
 	 */
-	private boolean containsRecursive(Type item, Node current) {
-		if(current == null)
-			return false;
-		if(current.data.equals(item))
-			return true;
+	private Node search(Type item, Node current) {
+		if(current == null || current.data.equals(item))
+			return current;
 		
 		if(item.compareTo(current.data) < 0)
-			return containsRecursive(item, current.leftChild);
+			return search(item, current.leftChild);
 		else
-			return containsRecursive(item, current.rightChild);
+			return search(item, current.rightChild);
 	}
 
 	/**
@@ -141,80 +145,72 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 		if(!contains(item))
 			return false;
 		
-		// finds the node that contains the item to remove and its parent node
-		Node toRemove = searchRemove(item, head);
+		// finds the Node that contains the item to remove and its parent Node
+		Node toRemove = search(item, head);
 		Node parentToRemove = toRemove.parent;
 		
-		// case where the node to remove has 0 children
+		// case where the Node to remove has 0 children
 		if(toRemove.leftChild == null && toRemove.rightChild == null) {
-			// if the node to remove is parent's left child
+			// if the Node to remove is parent's left child
 			if(parentToRemove.leftChild != null && parentToRemove.leftChild.data.equals(toRemove.data))
 				parentToRemove.leftChild = null;
-			// if the node to remove is parent's right child
+			// if the Node to remove is parent's right child
 			else
 				parentToRemove.rightChild = null;
 			size--;
+			
 			return true;
 		}
 		
-		// case where the node to remove has only a right child
+		// case where the Node to remove has only a right child
 		if(toRemove.leftChild == null) {
+			// if the Node to remove is the head
 			if(head.data.equals(item))
 				head = toRemove.rightChild;
-			// if the node to remove is the parent's left child
-			if(parentToRemove.leftChild != null && parentToRemove.leftChild.data.equals(toRemove.data))
+			// if the Node to remove is the parent's left child
+			else if(parentToRemove.leftChild != null && parentToRemove.leftChild.data.equals(item))
 				parentToRemove.leftChild = toRemove.rightChild;
-			// if the node to remove is the parent's right child
+			// if the Node to remove is the parent's right child
 			else
 				parentToRemove.rightChild = toRemove.rightChild;
 			toRemove.rightChild.parent = parentToRemove;
 			size--;
+			
 			return true;
 		}
-		// case where the node to remove only has a left child
+		// case where the Node to remove only has a left child
 		if(toRemove.rightChild == null) {
+			// if the Node to remove is the head
 			if(head.data.equals(item))
 				head = toRemove.leftChild;
-			// if the node to remove is the parent's left child
-			if(parentToRemove.leftChild != null && parentToRemove.leftChild.data.equals(toRemove.data))
+			// if the Node to remove is the parent's left child
+			else if(parentToRemove.leftChild != null && parentToRemove.leftChild.data.equals(item))
 				parentToRemove.leftChild = toRemove.leftChild;
-			// if the node to remove is the parent's right child
+			// if the Node to remove is the parent's right child
 			else
 				parentToRemove.rightChild = toRemove.leftChild;
 			toRemove.leftChild.parent = parentToRemove;
 			size--;
+			
 			return true;
 		}
 		
-		// case where the node to remove has 2 children
-		// finds the successor of the node to remove and removes the
-		// successor node from the BST
+		// case where the Node to remove has 2 children
+		// finds the successor of the Node to remove
 		Type successorData = toRemove.getSuccessor().data;
+		// removes the successor Node from the BST
 		remove(successorData);
-		// updates the data in the node to remove to the successor node's data
+		// updates the data in the Node to remove to the successor Node's data
 		toRemove.data = successorData;
+		
 		return true;
 	}
 	
 	/**
-	 * Helper recursive method that finds the node that holds 
-	 * the given item to remove from the BST.
-	 * Assumes that the BST contains this item.
+	 * Returns the first (i.e., smallest) item in the BST.
 	 * 
-	 * @param item
-	 * @param current
-	 * @return
+	 * @throws NoSuchElementException if the set is empty
 	 */
-	private Node searchRemove(Type item, Node current) {
-		if(current.data.equals(item))
-			return current;
-		
-		if(item.compareTo(current.data) < 0)
-			return searchRemove(item, current.leftChild);
-		else
-			return searchRemove(item, current.rightChild);
-	}
-
 	@Override
 	public Type first() throws NoSuchElementException {
 		if(isEmpty())
@@ -223,6 +219,11 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 		return head.getLeftmostNode().data;
 	}
 
+	/**
+	 * Returns the last (i.e., largest) item in the BST.
+	 * 
+	 * @throws NoSuchElementException if the set is empty
+	 */
 	@Override
 	public Type last() throws NoSuchElementException {
 		if(isEmpty())
@@ -231,35 +232,65 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 		return head.getRightmostNode().data;
 	}
 
+	/**
+	 * Returns the number of items in the BST.
+	 * 
+	 * @return the number of items in the BST
+	 */
 	@Override
 	public int size() {
 		return size;
 	}
 
+	/**
+	 * Checks if the BST is empty.
+	 * 
+	 * @return true if the size of the BST is 0,
+	 * 		   false otherwise
+	 */
 	@Override
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
+	/**
+	 * Clears the BST.
+	 */
 	@Override
 	public void clear() {
 		head = null;
 		size = 0;
 	}
 	
+	/**
+	 * Creates and returns an iterator to iterate through the BST.
+	 * 
+	 * @return an iterator to iterate through the BST
+	 */
 	@Override
 	public Iterator<Type> iterator() {
 		Iterator<Type> iterator = new BSTIterator();
+		
 		return iterator;
 	}
 	
-
+	
+	/**
+	 * Represents a singular Node of the BST.
+	 * Each Node of the BST holds a data,
+	 * and references to its left child, right child, and parent.
+	 */
 	private class Node {
 		Type data;
 		Node leftChild;
 		Node rightChild;
 		Node parent;
 		
+		/**
+		 * Creates a new Node that holds the given data.
+		 * 
+		 * @param data - the data the Node will hold
+		 */
 		public Node(Type data) {
 			this.data = data;
 			leftChild = null;
@@ -268,108 +299,125 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 		}
 		
 		/**
-		 * Gets the reference to the leftmost node in the binary tree rooted at this binary node.
+		 * Gets the reference to the leftmost Node in the binary tree rooted at this binary Node.
 		 * 
-		 * @return reference to the leftmost node in the binary tree rooted at this node
+		 * @return reference to the leftmost Node in the binary tree rooted at this Node
 		 */
 		public Node getLeftmostNode() {
 			if(leftChild == null)
 				return this;
+			
 			return leftChild.getLeftmostNode();
 		}
 
 		/**
-		 * Gets the reference to the rightmost node in the binary tree rooted at this binary node.
+		 * Gets the reference to the rightmost Node in the binary tree rooted at this binary Node.
 		 * 
-		 * @return reference to the rightmost node in the binary tree rooted at this node
+		 * @return reference to the rightmost Node in the binary tree rooted at this Node
 		 */
 		public Node getRightmostNode() {
 			if(rightChild == null)
 				return this;
+			
 			return rightChild.getRightmostNode();
 		}
 		
 		/**
-		 * Gets the height of the binary tree rooted at this binary node, where the height of a 
-		 * tree is the length of the longest path to a leaf node (e.g., a tree with a single 
-		 * node has a height of zero).
-		 * 
-		 * @return the height of the binary tree rooted at this node
-		 */
-		public int height() {
-			if(leftChild == null && rightChild == null)
-				return 0;
-			else if(leftChild == null)
-				return 1 + rightChild.height();
-			else if (rightChild == null)
-				return 1 + leftChild.height();
-			else
-				return 1 + Math.max(leftChild.height(), rightChild.height());
-		}
-		
-		/**
-		 * Helper method that gets the successor of this node.
-		 * The successor of any node is the leftmost node of this node's
+		 * Helper method that gets the successor of this Node.
+		 * The successor of any Node is the leftmost Node of this Node's
 		 * right child's subtree.
-		 * There is no successor if this node has no right child.
+		 * There is no successor if this Node has no right child.
 		 * 
-		 * @return the successor of this node, or null if this node has 
+		 * @return the successor of this Node, or null if this Node has 
 		 * 		   no right child
 		 */
 		public Node getSuccessor() {
 			if(rightChild == null)
 				return null;
+			
 			return rightChild.getLeftmostNode();
 		}
 		
 	}
 	
-	
+	/**
+	 * A custom Iterator designed to iterate through all elements
+	 * of the BST from smallest to largest.
+	 */
 	private class BSTIterator implements Iterator<Type> {
 		private int index;
 		private boolean canRemove;
 		private Node current;
 		
+		/**
+		 * Creates a new BSTIterator.
+		 */
 		public BSTIterator() {
 			index = 0;
 			canRemove = false;
 			current = null;
 		}
 		
+		/**
+		 * Checks if there is a next element.
+		 * 
+		 * @return true if the current index flag is less than 
+		 * 		   the size of the BST,
+		 * 		   false otherwise
+		 */
 		@Override
 		public boolean hasNext() {
 			return index < size;
 		}
 		
+		/**
+		 * Returns the next element.
+		 * 
+		 * @return the next element of the BST
+		 * @throws NoSuchElementException if there is no next element
+		 */
 		@Override
 		public Type next() throws NoSuchElementException {
 			if(!hasNext())
 				throw new NoSuchElementException();
 			
-			
+			// the first element is always the leftmost Node from the head Node
 			if(index == 0)
 				current = head.getLeftmostNode();
+			// if the current Node has no right child
 			else if(current.rightChild == null) {
+				// if current is the left child of its parent, the next Node is its parent
 				if(current.parent.leftChild != null && current.parent.leftChild.data.equals(current.data))
 					current = current.parent;
+				// if current is the right child of its parent, travel up the BST until an
+				// ancestor that is greater than current is reached, the next Node is this ancestor
 				else {
 					while(current.data.compareTo(current.parent.data) > 0)
 						current = current.parent;
 					current = current.parent;
 				}
 			}
+			// if current has a right child the next Node is its successor
 			else
 				current = current.getSuccessor();
 			
 			index++;
+			// the Node can now be removed
 			canRemove = true;
+			
 			return current.data;
 		}
 		
+		/**
+		 * Removes this element from the BST.
+		 * 
+		 * @throws IllegalStateException if next was not previously called
+		 */
 		public void remove() throws IllegalStateException {
 			if(!canRemove)
 				throw new IllegalStateException();
 			
+			// calls the BST remove method to remove the current Node
 			BinarySearchTree.this.remove(current.data);
 			index--;
 		}
