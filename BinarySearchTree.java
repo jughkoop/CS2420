@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
  * All "left" Nodes are lesser than its parent, while all
  * "right" Nodes are greater than its parent.
  * 
- * @author Daniel Lee and Mi Zeng
+ * @author Daniel Lee and Mi Zeng and CS 2420 staff
  * @version 3-17-2025
  * @param <Type> - the type of data that the BST stores
  */
@@ -41,6 +41,7 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 		// if the BST is empty, add the given item to the head Node
 		if(isEmpty()) {
 			head = new Node(item);
+			
 			size++;
 			return true;
 		}
@@ -73,8 +74,8 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 			// if direction is positive current is its parent's right child
 			else
 				parent.rightChild = current;
-			size++;
 			
+			size++;
 			return true;
 		}
 		
@@ -109,8 +110,10 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 			return false;
 		
 		Node found = search(item, head);
+		// if the Node returned is null, the BST doesn't hold this item
 		if(found == null)
 			return false;
+		// otherwise it does hold this item
 		return true;
 	
 	}
@@ -121,7 +124,8 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 	 * 
 	 * @param item - the item to remove from the BST
 	 * @param current - the current Node being looked at
-	 * @return the Node whose data is the item to remove
+	 * @return the Node that holds the given item, or null if the BST
+	 * 		   doesn't contain a Node that holds the given item
 	 */
 	private Node search(Type item, Node current) {
 		if(current == null || current.data.equals(item))
@@ -151,58 +155,55 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 		
 		// case where the Node to remove has 0 children
 		if(toRemove.leftChild == null && toRemove.rightChild == null) {
+			// if the Node to remove is the head
+			if(head.data.equals(item))
+				head = null;
 			// if the Node to remove is parent's left child
-			if(parentToRemove.leftChild != null && parentToRemove.leftChild.data.equals(toRemove.data))
+			else if(toRemove.checkDirection())
 				parentToRemove.leftChild = null;
 			// if the Node to remove is parent's right child
 			else
 				parentToRemove.rightChild = null;
-			size--;
-			
-			return true;
 		}
 		
 		// case where the Node to remove has only a right child
-		if(toRemove.leftChild == null) {
+		else if(toRemove.leftChild == null) {
 			// if the Node to remove is the head
 			if(head.data.equals(item))
 				head = toRemove.rightChild;
 			// if the Node to remove is the parent's left child
-			else if(parentToRemove.leftChild != null && parentToRemove.leftChild.data.equals(item))
+			else if(toRemove.checkDirection())
 				parentToRemove.leftChild = toRemove.rightChild;
 			// if the Node to remove is the parent's right child
 			else
 				parentToRemove.rightChild = toRemove.rightChild;
 			toRemove.rightChild.parent = parentToRemove;
-			size--;
-			
-			return true;
 		}
 		// case where the Node to remove only has a left child
-		if(toRemove.rightChild == null) {
+		else if(toRemove.rightChild == null) {
 			// if the Node to remove is the head
 			if(head.data.equals(item))
 				head = toRemove.leftChild;
 			// if the Node to remove is the parent's left child
-			else if(parentToRemove.leftChild != null && parentToRemove.leftChild.data.equals(item))
+			else if(toRemove.checkDirection())
 				parentToRemove.leftChild = toRemove.leftChild;
 			// if the Node to remove is the parent's right child
 			else
 				parentToRemove.rightChild = toRemove.leftChild;
 			toRemove.leftChild.parent = parentToRemove;
-			size--;
-			
-			return true;
 		}
 		
 		// case where the Node to remove has 2 children
-		// finds the successor of the Node to remove
-		Type successorData = toRemove.getSuccessor().data;
-		// removes the successor Node from the BST
-		remove(successorData);
-		// updates the data in the Node to remove to the successor Node's data
-		toRemove.data = successorData;
+		else {
+			// finds the successor of the Node to remove
+			Type successorData = toRemove.getSuccessor().data;
+			// removes the successor Node from the BST
+			remove(successorData);
+			// updates the data in the Node to remove to the successor Node's data
+			toRemove.data = successorData;
+		}
 		
+		size--;
 		return true;
 	}
 	
@@ -323,7 +324,7 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 		}
 		
 		/**
-		 * Helper method that gets the successor of this Node.
+		 * Gets the successor of this Node.
 		 * The successor of any Node is the leftmost Node of this Node's
 		 * right child's subtree.
 		 * There is no successor if this Node has no right child.
@@ -338,11 +339,23 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 			return rightChild.getLeftmostNode();
 		}
 		
+		/**
+		 * Determines if this Node is its parent's left child or right child.
+		 * 
+		 * @return true if this Node is its parent's left child,
+		 * 		   false if it is its parent's right child
+		 */
+		public boolean checkDirection() {
+			if(parent.leftChild != null && parent.leftChild.data.equals(data))
+				return true;
+			return false;
+		}
+		
 	}
 	
 	/**
 	 * A custom Iterator designed to iterate through all elements
-	 * of the BST from smallest to largest.
+	 * of the BST from smallest to largest by traversing the BST inorder.
 	 */
 	private class BSTIterator implements Iterator<Type> {
 		private int index;
@@ -387,7 +400,7 @@ public class BinarySearchTree<Type extends Comparable<? super Type>> implements 
 			// if the current Node has no right child
 			else if(current.rightChild == null) {
 				// if current is the left child of its parent, the next Node is its parent
-				if(current.parent.leftChild != null && current.parent.leftChild.data.equals(current.data))
+				if(current.checkDirection())
 					current = current.parent;
 				// if current is the right child of its parent, travel up the BST until an
 				// ancestor that is greater than current is reached, the next Node is this ancestor
