@@ -8,7 +8,7 @@ import java.util.List;
  * The result of both methods is that the list will be in descending order.
  * 
  * @author CS 2420 course staff and Daniel Lee and Mi Zeng
- * @version ??
+ * @version 4-7-2025
  */
 public class DeltaSorter {
 	
@@ -22,17 +22,24 @@ public class DeltaSorter {
 	 * @throws IllegalArgumentException if delta is less than 0 or greater than or
 	 *         equal to the size of the list
 	 */
-	public static <T extends Comparable<? super T>> void sort(List<T> list, int delta){
+	public static <T extends Comparable<? super T>> void sort(List<T> list, int delta) throws IllegalArgumentException {
+		if(delta < 0 || delta >= list.size())
+			throw new IllegalArgumentException();
+		
 		BinaryMaxHeap<T> heap = new BinaryMaxHeap<T>();
 		
+		// gets the first delta items from the list and adds them to the binary max-heap
 		for(int i = 0; i < delta; i++)
 			heap.add(list.get(i));
 		
+		// adds each subsequent item from the list, removes the max from the binary max-heap
+		// and puts it back into the list, starting at index 0
 		for(int i = delta; i < list.size(); i++) {
 			heap.add(list.get(i));
 			list.add(i - delta, heap.extractMax());
 		}
 		
+		// pulls and adds the remaining items of the heap back into the list
 		while(heap.size() > 0)
 			list.add(heap.extractMax());
 	}
@@ -48,17 +55,24 @@ public class DeltaSorter {
 	 * @throws IllegalArgumentException if delta is less than 0 or greater than or
 	 *         equal to the size of the list
 	 */
-	public static <T> void sort(List<T> list, int delta, Comparator<? super T> cmp){
+	public static <T> void sort(List<T> list, int delta, Comparator<? super T> cmp) throws IllegalArgumentException {
+		if(delta < 0 || delta >= list.size())
+			throw new IllegalArgumentException();
+		
 		BinaryMaxHeap<T> heap = new BinaryMaxHeap<T>(cmp);
 		
+		// gets the first delta items from the list and adds them to the binary max-heap
 		for(int i = 0; i < delta; i++)
-			heap.add(list.get(i));
-		
+					heap.add(list.get(i));
+				
+		// adds each subsequent item from the list, removes the max from the binary max-heap
+		// and puts it back into the list, starting at index 0
 		for(int i = delta; i < list.size(); i++) {
 			heap.add(list.get(i));
 			list.add(i - delta, heap.extractMax());
 		}
-		
+				
+		// pulls and adds the remaining items of the heap back into the list
 		while(heap.size() > 0)
 			list.add(heap.extractMax());
 	}
