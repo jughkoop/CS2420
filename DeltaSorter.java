@@ -2,13 +2,14 @@ package assign10;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * This class contains generic static methods for sorting a descending delta-sorted list.
  * The result of both methods is that the list will be in descending order.
  * 
  * @author CS 2420 course staff and Daniel Lee and Mi Zeng
- * @version 4-7-2025
+ * @version 4-8-2025
  */
 public class DeltaSorter {
 	
@@ -27,21 +28,22 @@ public class DeltaSorter {
 			throw new IllegalArgumentException();
 		
 		BinaryMaxHeap<T> heap = new BinaryMaxHeap<T>();
+		ListIterator<T> iterator = list.listIterator();
 		
 		// gets the first delta items from the list and adds them to the binary max-heap
 		for(int i = 0; i < delta; i++)
-			heap.add(list.get(i));
+			heap.add(iterator.next());
 		
 		// adds each subsequent item from the list, removes the max from the binary max-heap
 		// and puts it back into the list, starting at index 0
 		for(int i = delta; i < list.size(); i++) {
-			heap.add(list.get(i));
-			list.add(i - delta, heap.extractMax());
+			heap.add(iterator.next());
+			list.set(i - delta, heap.extractMax());
 		}
 		
 		// pulls and adds the remaining items of the heap back into the list
-		while(heap.size() > 0)
-			list.add(heap.extractMax());
+		for(int i = list.size() - delta; i < list.size(); i++)
+			list.set(i, heap.extractMax());
 	}
 	
 	/**
@@ -60,20 +62,21 @@ public class DeltaSorter {
 			throw new IllegalArgumentException();
 		
 		BinaryMaxHeap<T> heap = new BinaryMaxHeap<T>(cmp);
+		ListIterator<T> iterator = list.listIterator();
 		
 		// gets the first delta items from the list and adds them to the binary max-heap
 		for(int i = 0; i < delta; i++)
-					heap.add(list.get(i));
-				
+			heap.add(iterator.next());
+		
 		// adds each subsequent item from the list, removes the max from the binary max-heap
 		// and puts it back into the list, starting at index 0
 		for(int i = delta; i < list.size(); i++) {
-			heap.add(list.get(i));
-			list.add(i - delta, heap.extractMax());
+			heap.add(iterator.next());
+			list.set(i - delta, heap.extractMax());
 		}
-				
+		
 		// pulls and adds the remaining items of the heap back into the list
-		while(heap.size() > 0)
-			list.add(heap.extractMax());
+		for(int i = list.size() - delta; i < list.size(); i++)
+			list.set(i, heap.extractMax());
 	}
 }
